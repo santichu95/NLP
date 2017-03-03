@@ -36,6 +36,7 @@ class CorpusReader_TFIDF:
 
         #Stemming
         self.wordList = [self.stemmer.stem(x) for x in self.wordList]
+        self.wordList = list(set(self.wordList))
 
         self.calcAll()
 

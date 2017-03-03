@@ -25,8 +25,8 @@ def testCorpus(title, corpus):
             print(test.cosine_sim([fileId,fId]))
 
 def test():
-    testCorpus("Brown", brown)
+    #testCorpus("Brown", brown)
     testCorpus("Shakespeare", shakespeare)
-    testCorpus("State of The Union", state_union)
+    #testCorpus("State of The Union", state_union)
 
 test()
