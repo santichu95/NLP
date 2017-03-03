@@ -1,5 +1,10 @@
 from wordnet_newdist import *
 
-word_path_similarity("Lemon", "Oragnge")
-word_lch_similarity("Lemon", "Oragnge")
-word_wup_similarity("Lemon", "Oragnge")
+print("Path_similarity")
+print(word_path_similarity("Lemon", "Orange"))
+
+print("LCH_similarity")
+print(word_lch_similarity("Lemon", "Orange"))
+
+print("WUP_similarity")
+print(word_wup_similarity("Lemon", "Orange"))
