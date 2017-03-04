@@ -1,9 +1,12 @@
+#Santiago Andaluz Ruiz
+#CSI 4v96
+#Natural Language Processing
+
 import networkx as nx
 import queue
 from nltk.corpus import wordnet as wn
-from networkx import *
 
-def test():
+def allpair_adj_path_similarity():
     adjList = wn.all_synsets('a')
     G = nx.Graph();
 
@@ -15,18 +18,76 @@ def test():
                 seen.add(word)
                 G.add_edge(synset,word)
 
-    result = nx.all_pairs_shortest_path_length(G)
+    result = nx.all_pairs_shortest_path(G)
         
     largest = 0;
-    for key in result.values():
-        if ( max(key.values()) > largest ):
-            largest = max(key.values())
-            print(max(key.values()))
-            print(key)
+
+#Antonym path similarity
+def ant_path_similarity(s,t):
+    lLemma = s.lemmas()
+    rLemma = t.lemmas()
+
+    print(lLemma)
+    anty = set()
+
+    for lem in s.lemmas():
+        [anty.add(x) for x in lem.antonyms()]
+
+    largest = -1
+    for ant in rLemma:
+        if ant in anty:
+            current = adj_path_similarity(t, ant.synset())
+            if current > largest:
+                largest = current
+    return largest
+
+def symant_path_similarity(s,t):
+    return max(ant_path_similarity(s,t), ant_path_similarity(t,s))
+
+def word_symant_path_similarity(s,t):
+    left = get_adj_synsets(s)
+    right = get_adj_synsets(t)
+
+    if len(left) == 0 or len(right) == 0:
+        return []
+
+    result = []
+    largest = -1
+    current = 0.0
+    for lSense in left:
+        for rSense in right:
+            current = symant_path_similarity(lSense,rSense)
+            if current > largest:
+                result = [(lSense, rSense, current)]
+                largest = current
+            elif current == largest:
+                result.extend((lSense, rSense, current))
+
+    return result
+
+def word_ant_path_similarity(s,t):
+    left = get_adj_synsets(s)
+    right = get_adj_synsets(t)
+
+    if len(left) == 0 or len(right) == 0:
+        return []
+
+    result = []
+    largest = -1
+    current = 0.0
+    for lSense in left:
+        for rSense in right:
+            current = ant_path_similarity(lSense,rSense)
+            if current > largest:
+                result = [(lSense, rSense, current)]
+                largest = current
+            elif current == largest:
+                result.extend((lSense, rSense, current))
+
+    return result
 
 
 def adj_path_similarity(s,t):
-
     q = queue.Queue()
     seen = set()
 
@@ -43,12 +104,51 @@ def adj_path_similarity(s,t):
 
     return 0;
 
+def att_path_similarity(s,t):
+    sPrime = s.attributes()
+    tPrime = t.attributes()
+    if len(sPrime) == 0 or len(tPrime) == 0:
+        return 0
+
+    largest = 0
+    for left in sPrime:
+        for right in tPrime:
+            current = left.path_similarity(right)
+            if current > largest:
+                largest = current
+
+    return largest
+
+def word_att_path_similarity(s,t):
+    left = get_adj_synsets(s);
+    right = get_adj_synsets(t);
+
+    if len(left) == 0 or len(right) == 0:
+        return []
+
+    result = []
+    largest = -1
+    current = 0.0
+    for lSense in left:
+        for rSense in right:
+            current = att_path_similarity(lSense,rSense)
+            if current > largest:
+                result = [(lSense, rSense, current)]
+                largest = current
+            elif current == largest:
+                result.extend((lSense, rSense, current))
+
+    return result
+
 def word_adj_path_similarity(s,t):
     left = get_adj_synsets(s);
     right = get_adj_synsets(t);
 
+    if len(left) == 0 or len(right) == 0:
+        return []
+
     result = []
-    largest = 0.0
+    largest = -1
     current = 0.0
     for lSense in left:
         for rSense in right:
