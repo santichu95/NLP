@@ -2,25 +2,9 @@
 #CSI 4v96
 #Natural Language Processing
 
-import networkx as nx
 import queue
 from nltk.corpus import wordnet as wn
 
-def allpair_adj_path_similarity():
-    adjList = wn.all_synsets('a')
-    G = nx.Graph();
-
-    seen = set()
-
-    for synset in adjList:
-        for word in synset.similar_tos():
-            if word not in seen:
-                seen.add(word)
-                G.add_edge(synset,word)
-
-    result = nx.all_pairs_shortest_path(G)
-        
-    largest = 0;
 
 #Antonym path similarity
 def ant_path_similarity(s,t):
@@ -160,7 +144,7 @@ def word_adj_path_similarity(s,t):
                 result.extend((lSense, rSense, current))
 
     return result
-        
+
 
 def get_synsets(term):
     return wn.synsets(term, pos=[wn.NOUN, wn.VERB])
